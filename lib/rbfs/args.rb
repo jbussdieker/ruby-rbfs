@@ -28,6 +28,9 @@ module Rbfs
         opts.on("-t", "--[no-]threaded", "Run all hosts concurrently") do |v|
           options[:threaded] = v
         end
+        opts.on("--timeout TIMEOUT", "Set I/O timeout") do |v|
+          options[:timeout] = v
+        end
       end.parse!
 
       options

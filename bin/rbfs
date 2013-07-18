@@ -4,9 +4,15 @@ require 'rbfs/command'
 
 config = Rbfs::Command.parse_config
 results = Rbfs::Command.sync(config)
+success = true
 results.each do |host, result|
-  puts "#{host}: #{result[:exitcode].to_i}"
-  result[:output].split("\n").each do |line|
-    puts "  | #{line}"
+  puts "#{host}: #{result[:exitcode].to_i}" if config[:verbose]
+  success = false if result[:exitcode].to_i != 0
+  if config[:verbose]
+    result[:output].split("\n").each do |line|
+      puts "  | #{line}"
+    end
   end
 end
+
+exit 1 unless success

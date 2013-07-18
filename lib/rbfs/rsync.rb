@@ -9,6 +9,7 @@ module Rbfs
       args = ["-ae", "ssh", "--delete", @config[:root], "#{@host.ip}:#{@config[:root]}"]
       args << "-v" if @config[:verbose]
       args << "-n" if @config[:dry]
+      args << "--timeout=#{@config[:timeout]}" if @config[:timeout]
       output = command("rsync", args)
       exitcode = $?
       {:output => output, :exitcode => exitcode}
@@ -22,9 +23,9 @@ module Rbfs
 
     def run_command(cmd, &block)
       if block_given?
-        IO.popen(cmd, &block)
+        IO.popen("#{cmd} 2>&1", &block)
       else
-        `#{cmd}`
+        `#{cmd} 2>&1`
       end
     end
   end
