@@ -7,7 +7,11 @@ module Rbfs
     end
 
     def info(msg)
-      puts "\033[0;32m#{msg}\033[00masdf"
+      puts "\033[0;32m#{msg}\033[00m"
+    end
+
+    def puts(msg)
+      puts "#{msg}"
     end
 
     def error(msg)

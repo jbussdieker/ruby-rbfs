@@ -42,11 +42,7 @@ module Rbfs
           logger.info "#{host}: #{result[:exitcode].to_i}"
         end
         result[:output].split("\n").each do |line|
-          if result[:exitcode] != 0
-            logger.error "  | #{line}"
-          else
-            logger.info "  | #{line}"
-          end
+          logger.puts "  | #{line}"
         end
         success = false if result[:exitcode] != 0
       end
