@@ -16,6 +16,9 @@ module Rbfs
         opts.on("-r", "--root ROOT", "Root path to sync") do |v|
           options[:root] = v
         end
+        opts.on("-s", "--subpath PATH", "Subpath of root to sync") do |v|
+          options[:subpath] = v
+        end
         opts.on("-v", "--[no-]verbose", "Print extra debugging info") do |v|
           options[:verbose] = v
         end

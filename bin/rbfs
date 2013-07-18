@@ -5,6 +5,6 @@ require 'rbfs/command'
 config = Rbfs::Command.config
 hosts = Rbfs::Hosts.new(config)
 results = hosts.sync
-results.each do |result|
-  p result.exitstatus
+results.each do |host, result|
+  puts "#{host}: #{result}"
 end

@@ -1,4 +1,5 @@
 require "rbfs/host"
+require "rbfs/rsync"
 
 module Rbfs
   class Hosts
@@ -28,7 +29,7 @@ module Rbfs
     def sync_blocking
       collect do |host|
         puts "#{host} (#{host.ip})" if @config[:verbose]
-        host.sync(@config)
+        [host, Rsync.new(host, @config).sync]
       end
     end
 
@@ -38,7 +39,7 @@ module Rbfs
       collect do |host|
         puts "#{host} (#{host.ip})" if @config[:verbose]
         Future.new do
-          host.sync(@config)
+          [host, Rsync.new(host, @config).sync]
         end
       end
     end

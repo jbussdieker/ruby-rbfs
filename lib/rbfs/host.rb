@@ -1,9 +1,5 @@
-require 'rbfs/rsync'
-
 module Rbfs
   class Host
-    include Rsync
-
     def initialize(raw)
       @raw = raw
     end
@@ -18,6 +14,10 @@ module Rbfs
 
     def name
       @raw.split[1]
+    end
+
+    def alias
+      @raw.split[2]
     end
   end
 end
