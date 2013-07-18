@@ -1,5 +1,5 @@
 module Rbfs
-  class Future < BasicObject
+  class Future
     def initialize(&callable)
       @thread ||= ::Thread.new { callable.call }
     end
