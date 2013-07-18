@@ -2,9 +2,11 @@
 require 'rbfs'
 require 'rbfs/command'
 
-config = Rbfs::Command.config
-hosts = Rbfs::Hosts.new(config)
-results = hosts.sync
+config = Rbfs::Command.parse_config
+results = Rbfs::Command.sync(config)
 results.each do |host, result|
-  puts "#{host}: #{result}"
+  puts "#{host}: #{result[:exitcode].to_i}"
+  result[:output].split("\n").each do |line|
+    puts "  | #{line}"
+  end
 end
