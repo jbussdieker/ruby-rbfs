@@ -17,6 +17,8 @@ module Rbfs
     end
 
     def self.sync(config)
+      config[:root] = File.join(config[:root], config[:subpath]) if config[:subpath]
+      puts "Syncing #{config[:root]}..." if config[:verbose]
       hosts = Rbfs::HostParser.new(File.open(config[:hosts]))
       hosts.collect do |host|
         [host, sync_host(config, host)]
