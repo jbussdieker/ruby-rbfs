@@ -1,2 +1,10 @@
 #!/usr/bin/env ruby
-puts "Ruby File Sync"
+require 'rbfs'
+require 'rbfs/command'
+
+config = Rbfs::Command.config
+hosts = Rbfs::Hosts.new(config[:hosts])
+hosts.each do |host|
+  puts "#{host} (#{host.ip})" if config[:verbose]
+  host.sync(config)
+end
