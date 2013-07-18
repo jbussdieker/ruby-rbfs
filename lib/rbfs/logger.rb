@@ -7,7 +7,7 @@ module Rbfs
     end
 
     def info(msg)
-      puts "\033[0;32m#{msg}" if config[:verbose]
+      puts "\033[0;32m#{msg}"
     end
 
     def error(msg)
