@@ -5,8 +5,12 @@ module Rbfs
   class Command
     def self.config
       args = Rbfs::Args.new.parse
-      options = Rbfs::Config.new(args[:config]).parse
-      options.merge(args)
+      if args[:config]
+        options = Rbfs::Config.new(args[:config]).parse
+        options.merge(args)
+      else
+        args
+      end
     end
   end
 end

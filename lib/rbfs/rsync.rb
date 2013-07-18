@@ -5,6 +5,7 @@ module Rbfs
       command += " -n" if config[:dry]
       result = `#{command}`
       puts result if config[:verbose]
+      $?
     end
   end
 end

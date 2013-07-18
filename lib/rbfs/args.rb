@@ -22,6 +22,9 @@ module Rbfs
         opts.on("-d", "--dry", "Test config settings") do |v|
           options[:dry] = v
         end
+        opts.on("-t", "--[no-]threaded", "Run all hosts concurrently") do |v|
+          options[:threaded] = v
+        end
       end.parse!
 
       options
