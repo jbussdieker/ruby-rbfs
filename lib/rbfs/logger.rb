@@ -11,7 +11,7 @@ module Rbfs
     end
 
     def puts(msg)
-      puts "#{msg}"
+      $stdout.puts "#{msg}"
     end
 
     def error(msg)
