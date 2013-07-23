@@ -9,8 +9,13 @@ module Rbfs
   class Command
     attr_accessor :config
 
-    def initialize
-      @config = parse_config
+    def initialize(config = nil)
+      if config
+        @config = config
+      else
+        @config = parse_config unless config
+      end
+      config[:logger] = Logger.new(config)
       logger.critical "No hosts file specified" unless config[:hosts]
       logger.critical "Root path not specified" unless config[:root]
     end
@@ -24,7 +29,6 @@ module Rbfs
       else
         config = cmdline_args
       end
-      config[:logger] = Logger.new(config)
       config
     end
 
@@ -50,7 +54,14 @@ module Rbfs
     end
 
     def sync_hosts
-      config[:root] = File.join(config[:root], config[:subpath]) if config[:subpath]
+      unless config[:remote_root]
+        config[:remote_root] = config[:root]
+      end
+      if config[:subpath]
+        config[:root] = File.join(config[:root], config[:subpath])
+        config[:remote_root] = File.join(config[:remote_root], config[:subpath])
+      end
+
       logger.info "Syncing #{config[:root]}..."
       hosts = Rbfs::HostParser.new(File.open(config[:hosts]))
       hosts.collect do |host|

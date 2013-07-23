@@ -12,7 +12,7 @@ describe Rbfs::Rsync do
   end
 
   it "should command" do
-    Rbfs::Rsync.new.command("echo", ["test"]).should eql("test\n")
+    Rbfs::Rsync.new.command("echo", ["test"])[:output].should eql("test\n")
   end
 
   it "should command block" do

@@ -10,16 +10,24 @@ module Rbfs
     end
 
     def remote_url
-      "#{@host.ip}:#{@config[:root]}"
+      "#{@host.ip}:#{@config[:remote_root]}"
+    end
+
+    def local_root
+      if File.directory?(@config[:root])
+        @config[:root] + "/"
+      else
+        @config[:root]
+      end
     end
 
     def mkdir
-      args = [@host.ip, "mkdir", "-p", @config[:root]]
+      args = [@host.ip, "mkdir", "-p", @config[:remote_root]]
       command("ssh", args)
     end
 
     def rsync
-      args = ["-ae", "ssh", "--delete", @config[:root], remote_url]
+      args = ["-ae", "ssh", "--delete", local_root, remote_url]
       args << "-v" if @config[:verbose]
       args << "-n" if @config[:dry]
       args << "--timeout=#{@config[:timeout]}" if @config[:timeout]
@@ -27,7 +35,9 @@ module Rbfs
     end
 
     def sync
-      mkdir
+      if File.directory?(@config[:root])
+        mkdir
+      end
       rsync
     end
 
