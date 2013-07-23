@@ -14,7 +14,7 @@ module Rbfs
     end
 
     def mkdir
-      args = [remote_url, "mkdir", "-p", @config[:root]]
+      args = [@host.ip, "mkdir", "-p", @config[:root]]
       command("ssh", args)
     end
 
