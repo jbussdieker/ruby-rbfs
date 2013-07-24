@@ -1,6 +1,6 @@
+require 'hosts_file'
 require 'rbfs/args'
 require 'rbfs/config'
-require "rbfs/host_parser"
 require "rbfs/rsync"
 require "rbfs/futures"
 require "rbfs/logger"
@@ -44,9 +44,9 @@ module Rbfs
       results = sync_hosts
       results.each do |host, result|
         if result.success?
-          logger.info "#{host}: #{result.error}"
+          logger.info "#{host.name}: #{result.error}"
         else
-          logger.error "#{host}: #{result.error}"
+          logger.error "#{host.name}: #{result.error}"
         end
         result.changes.each do |change|
           logger.puts "  | #{change.filename} (#{change.summary})"
@@ -63,7 +63,7 @@ module Rbfs
       end
 
       logger.info "Syncing #{config[:root]}..."
-      hosts = Rbfs::HostParser.new(File.open(config[:hosts]))
+      hosts = HostsFile.load(config[:hosts])
       hosts.collect do |host|
         [host, sync_host(host)]
       end
