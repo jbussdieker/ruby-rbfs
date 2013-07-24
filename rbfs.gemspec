@@ -11,6 +11,7 @@ Gem::Specification.new do |spec|
   spec.description   = %q{Ruby File Sync}
   spec.summary       = %q{Ruby File Sync}
   spec.homepage      = "http://github.com/jbussdieker/ruby-rbfs"
+  spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
