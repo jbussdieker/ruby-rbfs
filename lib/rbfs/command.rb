@@ -39,13 +39,23 @@ module Rbfs
       @config[:logger]
     end
 
+    def sync_path
+      if config[:subpath]
+        File.join(config[:root], config[:subpath])
+      else
+        config[:root]
+      end
+    end
+
     def sync
       success = true
 
       sync_hosts.each do |host, result|
         logger.info "#{host.name}: #{result.error}"
         result.changes.each do |change|
-          logger.puts "  | #{change.filename} (#{change.summary})"
+          if config[:verbose]
+            logger.puts "  | #{change.filename} (#{change.summary})"
+          end
         end
         success = false unless result.success?
       end
@@ -54,12 +64,7 @@ module Rbfs
     end
 
     def sync_hosts
-      if config[:subpath]
-        config[:root] = File.join(config[:root], config[:subpath])
-        config[:remote_root] = File.join(config[:remote_root], config[:subpath])
-      end
-
-      logger.info "Syncing #{config[:root]}..."
+      logger.info "Syncing #{sync_path}..."
       hosts = HostsFile.load(config[:hosts])
       hosts.collect do |host|
         [host, sync_host(host)]

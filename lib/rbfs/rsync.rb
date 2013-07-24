@@ -7,38 +7,51 @@ module Rbfs
       @host = host
     end
 
+    def config
+      @config
+    end
+
     def logger
-      @config[:logger]
+      config[:logger]
     end
 
-    def remote_url
-      "#{@host.ip}:#{@config[:remote_root]}"
-    end
-
-    def local_root
-      if File.directory?(@config[:root])
-        @config[:root] + "/"
+    def sub_root(path)
+      if config[:subpath]
+        File.join(path, config[:subpath])
       else
-        @config[:root]
+        path
       end
     end
 
+    def remote_url
+      "#{@host.ip}:#{remote_root}"
+    end
+
+    def remote_root
+      sub_root(config[:remote_root])
+    end
+
+    def local_root
+      path = sub_root(config[:root])
+      path += "/" if File.directory?(path)
+      path
+    end
+
     def mkdir
-      args = [@host.ip, "mkdir", "-p", @config[:remote_root]]
+      args = [@host.ip, "mkdir", "-p", File.dirname(remote_root)]
       command("ssh", args)
     end
 
     def rsync
       args = ["-a", "--delete"]
-      args << "-e #{@config[:shell]}" if @config[:shell]
-      args << "-v" if @config[:verbose]
-      args << "-n" if @config[:dry]
-      args << "--timeout=#{@config[:timeout]}" if @config[:timeout]
+      args << "-v" if config[:verbose]
+      args << "-n" if config[:dry]
+      args << "--timeout=#{config[:timeout]}" if config[:timeout]
       ::Rsync.run(local_root, remote_url, args)
     end
 
     def sync
-      if File.directory?(@config[:root])
+      if config[:subpath]
         mkdir
       end
       rsync

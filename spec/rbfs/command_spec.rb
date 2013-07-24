@@ -12,20 +12,23 @@ describe Rbfs::Command do
     end
   end
 
-  def build_simple_test_dir
+  # /sample.txt
+  def build_simple
     File.open(File.join(@tmpdir, "local", "sample.txt"), 'w') do |f|
       f.write("hello world!")
     end
   end
 
-  def build_multipath_test_dir
+  # /somepath/sample.txt
+  def build_subpath_simple
     Dir.mkdir(File.join(@tmpdir, "local", "somepath"))
     File.open(File.join(@tmpdir, "local", "somepath", "sample.txt"), 'w') do |f|
       f.write("hello world!")
     end
   end
 
-  def build_deeppath_test_dir
+  # /somepath/someotherpath/sample.txt
+  def build_deeppath_simple
     Dir.mkdir(File.join(@tmpdir, "local", "somepath"))
     Dir.mkdir(File.join(@tmpdir, "local", "somepath", "someotherpath"))
     File.open(File.join(@tmpdir, "local", "somepath", "someotherpath", "sample.txt"), 'w') do |f|
@@ -37,6 +40,26 @@ describe Rbfs::Command do
     `cd #{@tmpdir}/#{subpath}; tree`
   end
 
+  def run_sync_test
+    Rbfs::Command.new(
+      :hosts => File.join(@tmpdir, "hosts"),
+      :root => File.join(@tmpdir, "local"),
+      :remote_root => File.join(@tmpdir, "remote")
+    ).sync
+    get_tree("remote").should eql(get_tree("local"))
+  end
+
+  def run_deeppath_test(subpath)
+    build_deeppath_simple
+    Rbfs::Command.new(
+      :hosts => File.join(@tmpdir, "hosts"),
+      :root => File.join(@tmpdir, "local"),
+      :subpath => subpath,
+      :remote_root => File.join(@tmpdir, "remote")
+    ).sync
+    get_tree("remote").should eql(get_tree("local"))
+  end
+
   context "simple", :local => true do
     around(:each) do |example|
       make_test_dir do
@@ -45,48 +68,35 @@ describe Rbfs::Command do
     end
 
     it "should do simple file sync" do
-      build_simple_test_dir
+      build_simple
       Rbfs::Command.new(
         :hosts => File.join(@tmpdir, "hosts"),
         :root => File.join(@tmpdir, "local") + "/sample.txt",
-        :shell => '"ssh -o StrictHostKeyChecking=no"',
         :remote_root => File.join(@tmpdir, "remote") + "/sample.txt"
       ).sync
-      get_tree("local").should eql(get_tree("remote"))
+      get_tree("remote").should eql(get_tree("local"))
     end
 
     it "should do simple path sync" do
-      build_simple_test_dir
-      Rbfs::Command.new(
-        :hosts => File.join(@tmpdir, "hosts"),
-        :root => File.join(@tmpdir, "local"),
-        :shell => '"ssh -o StrictHostKeyChecking=no"',
-        :remote_root => File.join(@tmpdir, "remote")
-      ).sync
-      get_tree("local").should eql(get_tree("remote"))
+      build_simple
+      run_sync_test
     end
 
     it "should do multi path sync" do
-      build_multipath_test_dir
-      Rbfs::Command.new(
-        :hosts => File.join(@tmpdir, "hosts"),
-        :root => File.join(@tmpdir, "local"),
-        :shell => '"ssh -o StrictHostKeyChecking=no"',
-        :remote_root => File.join(@tmpdir, "remote")
-      ).sync
-      get_tree("local").should eql(get_tree("remote"))
+      build_subpath_simple
+      run_sync_test
     end
 
     it "should do sub path sync" do
-      build_deeppath_test_dir
-      Rbfs::Command.new(
-        :hosts => File.join(@tmpdir, "hosts"),
-        :root => File.join(@tmpdir, "local"),
-        :subpath => "somepath/someotherpath/",
-        :shell => '"ssh -o StrictHostKeyChecking=no"',
-        :remote_root => File.join(@tmpdir, "remote")
-      ).sync
-      get_tree("local").should eql(get_tree("remote"))
+      run_deeppath_test("somepath")
+    end
+
+    it "should do deep sub path sync" do
+      run_deeppath_test("somepath/someotherpath")
+    end
+
+    it "should do deep sub path file sync" do
+      run_deeppath_test("somepath/someotherpath/sample.txt")
     end
   end
 end

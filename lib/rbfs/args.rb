@@ -19,9 +19,6 @@ module Rbfs
         opts.on("-e", "--remote-root ROOT", "Remote root path to sync") do |v|
           options[:remote_root] = v
         end
-        opts.on("--shell SHELL", "Remote shell to use") do |v|
-          options[:shell] = v
-        end
         opts.on("-s", "--subpath PATH", "Subpath of root to sync") do |v|
           options[:subpath] = v
         end
