@@ -41,18 +41,15 @@ module Rbfs
 
     def sync
       success = true
-      results = sync_hosts
-      results.each do |host, result|
-        if result.success?
-          logger.info "#{host.name}: #{result.error}"
-        else
-          logger.error "#{host.name}: #{result.error}"
-        end
+
+      sync_hosts.each do |host, result|
+        logger.info "#{host.name}: #{result.error}"
         result.changes.each do |change|
           logger.puts "  | #{change.filename} (#{change.summary})"
         end
         success = false unless result.success?
       end
+
       success
     end
 
