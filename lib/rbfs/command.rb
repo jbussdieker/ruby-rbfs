@@ -15,9 +15,9 @@ module Rbfs
       else
         @config = parse_config unless config
       end
-      config[:logger] = Logger.new(config)
-      logger.critical "No hosts file specified" unless config[:hosts]
-      logger.critical "Root path not specified" unless config[:root]
+      @config[:logger] = Logger.new(@config)
+      logger.critical "No hosts file specified" unless @config[:hosts]
+      logger.critical "Root path not specified" unless @config[:root]
     end
 
     def parse_config
@@ -28,6 +28,9 @@ module Rbfs
         config = config_args.merge(cmdline_args)
       else
         config = cmdline_args
+      end
+      unless config[:remote_root]
+        config[:remote_root] = config[:root]
       end
       config
     end
@@ -40,23 +43,20 @@ module Rbfs
       success = true
       results = sync_hosts
       results.each do |host, result|
-        if result[:exitcode] != 0
-          logger.error "#{host}: #{result[:exitcode].to_i}"
+        if result.success?
+          logger.info "#{host}: #{result.error}"
         else
-          logger.info "#{host}: #{result[:exitcode].to_i}"
+          logger.error "#{host}: #{result.error}"
         end
-        result[:output].split("\n").each do |line|
-          logger.puts "  | #{line}"
+        result.changes.each do |change|
+          logger.puts "  | #{change.filename} (#{change.summary})"
         end
-        success = false if result[:exitcode] != 0
+        success = false unless result.success?
       end
       success
     end
 
     def sync_hosts
-      unless config[:remote_root]
-        config[:remote_root] = config[:root]
-      end
       if config[:subpath]
         config[:root] = File.join(config[:root], config[:subpath])
         config[:remote_root] = File.join(config[:remote_root], config[:subpath])

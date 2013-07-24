@@ -1,3 +1,5 @@
+require 'rsync'
+
 module Rbfs
   class Rsync
     def initialize(config = {}, host = nil)
@@ -27,11 +29,11 @@ module Rbfs
     end
 
     def rsync
-      args = ["-ae", "ssh", "--delete", local_root, remote_url]
+      args = ["-ae", "ssh", "--delete"]
       args << "-v" if @config[:verbose]
       args << "-n" if @config[:dry]
       args << "--timeout=#{@config[:timeout]}" if @config[:timeout]
-      command("rsync", args)
+      ::Rsync.run(local_root, remote_url, args)
     end
 
     def sync
