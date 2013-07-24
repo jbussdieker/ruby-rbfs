@@ -37,7 +37,7 @@ describe Rbfs::Command do
     `cd #{@tmpdir}/#{subpath}; tree`
   end
 
-  context "simple" do
+  context "simple", :local => true do
     around(:each) do |example|
       make_test_dir do
         example.run
