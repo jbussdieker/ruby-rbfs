@@ -29,7 +29,8 @@ module Rbfs
     end
 
     def rsync
-      args = ["-ae", "ssh", "--delete"]
+      args = ["-a", "--delete"]
+      args << "-e #{@config[:shell]}" if @config[:shell]
       args << "-v" if @config[:verbose]
       args << "-n" if @config[:dry]
       args << "--timeout=#{@config[:timeout]}" if @config[:timeout]

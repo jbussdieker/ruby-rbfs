@@ -49,6 +49,7 @@ describe Rbfs::Command do
       Rbfs::Command.new(
         :hosts => File.join(@tmpdir, "hosts"),
         :root => File.join(@tmpdir, "local") + "/sample.txt",
+        :shell => '"ssh -o StrictHostKeyChecking=no"',
         :remote_root => File.join(@tmpdir, "remote") + "/sample.txt"
       ).sync
       get_tree("local").should eql(get_tree("remote"))
@@ -59,6 +60,7 @@ describe Rbfs::Command do
       Rbfs::Command.new(
         :hosts => File.join(@tmpdir, "hosts"),
         :root => File.join(@tmpdir, "local"),
+        :shell => '"ssh -o StrictHostKeyChecking=no"',
         :remote_root => File.join(@tmpdir, "remote")
       ).sync
       get_tree("local").should eql(get_tree("remote"))
@@ -69,6 +71,7 @@ describe Rbfs::Command do
       Rbfs::Command.new(
         :hosts => File.join(@tmpdir, "hosts"),
         :root => File.join(@tmpdir, "local"),
+        :shell => '"ssh -o StrictHostKeyChecking=no"',
         :remote_root => File.join(@tmpdir, "remote")
       ).sync
       get_tree("local").should eql(get_tree("remote"))
@@ -80,6 +83,7 @@ describe Rbfs::Command do
         :hosts => File.join(@tmpdir, "hosts"),
         :root => File.join(@tmpdir, "local"),
         :subpath => "somepath/someotherpath/",
+        :shell => '"ssh -o StrictHostKeyChecking=no"',
         :remote_root => File.join(@tmpdir, "remote")
       ).sync
       get_tree("local").should eql(get_tree("remote"))
