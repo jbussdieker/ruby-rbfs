@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["jbussdieker@gmail.com"]
   spec.description   = %q{Ruby File Sync}
   spec.summary       = %q{Ruby File Sync}
-  spec.homepage      = ""
+  spec.homepage      = "http://github.com/jbussdieker/ruby-rbfs"
 
   spec.files         = `git ls-files`.split($/)
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
